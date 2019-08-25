@@ -29,10 +29,10 @@ const folderRegEx = new RegExp(`(["'])(${sourceFolderString})/.*?\\1`, 'ig');
 // Adapted from vendors.js walkSync
 const getFolderTreeFiles = (dir, fileExt = '*', filelist = []) => {
   dir = dir.replace(/\\/g, '/');
-  fs.readdirSync(dir).filter(f => fileExt === '*' ? true : path.extname(f) === fileExt).forEach(file => {
+  fs.readdirSync(dir).forEach(file => {
     filelist = fs.statSync(path.join(dir, file)).isDirectory()
       ? getFolderTreeFiles(path.join(dir, file), fileExt, filelist)
-      : filelist.concat(path.posix.join(dir, file));
+      : (fileExt === '*' || path.extname(file) === fileExt) ? filelist.concat(path.posix.join(dir, file)) : filelist;
   });
   return filelist;
 }
